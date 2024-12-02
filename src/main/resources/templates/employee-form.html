@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin-top: 50px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #1a73e8;
+        }
+
+        .h1-css {
+            color: #1a73e8;
+            text-align: center;
+        }
+
+        .form-container .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-container input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        input[type="checkbox"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-container input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .btn-submit {
+            background-color: #1a73e8;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #155f9f;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .flex-reverse {
+            align-items: center;
+            display: flex;
+            flex-flow: column;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1 class="h1-css">Register/Edit employee form</h1>
+    <form th:action="@{/employee-form}" method="post" th:object="${employeeForm}" id="employeeForm">
+        <div class="form-group" id="form-group-employee-code">
+            <label for="employeeCode">Employee Code</label>
+            <input id="employeeCode" type="text" th:field="*{employeeCode}"/>
+            <div th:if="${#fields.hasErrors('employeeCode')}" th:errors="*{employeeCode}" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="employeeName">Employee Name</label>
+            <input id="employeeName" type="text" th:field="*{employeeName}"/>
+            <div th:if="${#fields.hasErrors('employeeName')}" th:errors="*{employeeName}" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="birth">Birth Date</label>
+            <input id="birth" type="date" th:field="*{birth}"/>
+            <div th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" th:field="*{email}"/>
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
+        </div>
+
+        <div class="form-group flex">
+            <div class="flex-reverse">
+                <label for="isManager">Manager</label>
+                <input id="isManager" th:field="*{isManager}" th:value="*{isManager}" type="checkbox" th:checked="*{isManager == 1}"/>
+            </div>
+            <div class="flex-reverse">
+                <label for="deleteFlag">Active</label>
+                <input type="checkbox" id="deleteFlag" th:field="*{deleteFlag}" th:value="*{deleteFlag}" th:checked="*{deleteFlag == 0}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="managerCode">Manager Code</label>
+            <select class="selection" id="managerCode" th:field="*{managerCode}">
+                <option value=""></option>
+                <option th:each="emp : ${managerList}"
+                        th:selected="${emp.selected == true}"
+                        th:value="${emp.employeeCode}"
+                        th:text="${emp.employeeName}"></option>
+            </select>
+            <div th:if="${#fields.hasErrors('managerCode')}" th:errors="*{managerCode}" class="error"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="departmentCode"> Department</label>
+            <select class="selection" id="departmentCode" th:field="*{departmentCode}">
+                <option value=""></option>
+                <option
+                        th:each="dept : ${departmentList}"
+                        th:selected="${dept.selected == true}"
+                        th:value="${dept.departmentCode}"
+                        th:text="${dept.departmentName}"></option>
+            </select>
+            <div th:if="${#fields.hasErrors('departmentCode')}" th:errors="*{departmentCode}" class="error"></div>
+
+        </div>
+
+        <div class="form-group">
+            <button class="btn-submit" type="submit">Save/Edit</button>
+        </div>
+
+    </form>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.getElementById('employeeForm').addEventListener('submit', function (event) {
+        const currentParams = new URLSearchParams(window.location.search);
+        if (currentParams.toString()) {
+            let action = this.action;
+            action = action + `?` + currentParams;
+            this.action = action;
+        }
+    });
+
+    $(document).ready(function () {
+        const currentParams = new URLSearchParams(window.location.search);
+        if (currentParams.toString()) {
+            let employeeCode = $("#employeeCode");
+            if (employeeCode) {
+                employeeCode.prop('readonly', true)
+            }
+        } else {
+            let employeeCode = $("#form-group-employee-code");
+            employeeCode.css('display', 'none');
+        }
+
+    });
+</script>
+</html>

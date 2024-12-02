@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage</title>
+    <style>
+        body {
+            font-size: 18px;
+        }
+
+        table {
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+
+        thead {
+            background-color: #1a73e8;
+        }
+
+        thead tr {
+            width: 100%;
+            border: 1px solid #1a73e8;
+            background: transparent;
+        }
+
+        thead th {
+            color: white;
+            text-align: left;
+            padding: 5px;
+        }
+
+        tbody th, td {
+            border: 1px solid #1a73e8;
+            text-align: left;
+            padding: 5px;
+        }
+
+        tbody th {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+            font-weight: bold;
+        }
+
+        tbody .input-text, .selection {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #1a73e8;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.3s;
+            padding: 7px;
+        }
+
+        .input-text:focus, .selection:focus {
+            border-color: #0b57d0;
+        }
+
+        .td-checkbox {
+            text-align: center;
+        }
+
+        .border-none {
+            border: none;
+            text-align: right;
+        }
+
+        tbody tr button {
+            text-align: center;
+            padding: 7px 12px;
+        }
+
+        .btn-submit {
+            background-color: #1a73e8;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .wrapper {
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-col {
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <table class="table-search">
+        <thead>
+        <tr>
+            <th colspan="10">Search options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <form id="form-search" th:action="@{/employee}" th:method="get">
+            <tr>
+                <th>Name <input type="hidden" value="1" name="search"></th>
+                <td colspan="3"><input type="text" class="input-text" name="empName" th:text="${searchName}"></td>
+            </tr>
+            <tr>
+                <th>Department</th>
+                <td><select class="selection" name="department">
+                    <option value=""></option>
+                    <option th:each="dept : ${departmentList}"
+                            th:selected="${dept.selected == true}"
+                            th:value="${dept.departmentCode}"
+                            th:text="${dept.departmentName}"></option>
+                </select></td>
+                <th>Manager</th>
+                <td><select class="selection" name="manager">
+                    <option value=""></option>
+                    <option th:each="emp : ${managerList}"
+                            th:selected="${emp.selected == true}"
+                            th:value="${emp.employeeCode}"
+                            th:text="${emp.employeeName}"></option>
+                </select></td>
+            </tr>
+            <tr>
+                <td class="border-none"></td>
+                <td class="border-none"></td>
+                <td class="border-none"></td>
+                <td class="border-none">
+                    <button class="btn-submit" id="btn-submit" type="submit">Search</button>
+                </td>
+            </tr>
+        </form>
+
+        </tbody>
+    </table>
+</div>
+<br>
+<div class="wrapper">
+    <table class="table-data">
+        <thead>
+        <tr>
+            <th colspan="10">Search data</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>Selected</th>
+            <th>Employee code</th>
+            <th>Employee name</th>
+            <th>Birth</th>
+            <th>Email</th>
+            <th>Manager</th>
+            <th>Manager code</th>
+            <th>Department</th>
+            <th>Active</th>
+        </tr>
+        <tr th:if="${employeeList == null || (employeeList != null and employeeList.size() == 0)}">
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+        </tr>
+        <tr th:if="${employeeList == null || (employeeList != null and employeeList.size() == 0)}">
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+        </tr>
+        <tr th:if="${employeeList == null || (employeeList != null and employeeList.size() == 0)}">
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+            <td class="empty-col"></td>
+        </tr>
+        <tr th:each="emp : ${employeeList}">
+            <td class="td-checkbox"><a
+                    th:href="${'/employee-form?empCode=' + emp.employeeCode}"
+            >Edit</a>
+            </td>
+            <td th:id="${emp.employeeCode + '_code'}" th:text="${emp.employeeCode}"></td>
+            <td th:id="${emp.employeeCode + '_name'}" th:text="${emp.employeeName}"></td>
+            <td th:id="${emp.employeeCode + '_birth'}" th:text="${emp.birth}"></td>
+            <td th:id="${emp.employeeCode + '_email'}" th:text="${emp.email}"></td>
+            <td class="td-checkbox">
+                <label>
+                    <input th:id="${emp.employeeCode + '_isManager'}" type="checkbox"
+                           disabled
+                           th:checked="${emp.isManager != null and emp.isManager == 1}"
+                    />
+                </label>
+            </td>
+            <td th:id="${emp.employeeCode + '_managerName'}" th:text="${emp.managerName}">
+                <input type="hidden" value="${emp.managerCode}" th:id="${emp.employeeCode + '_managerCode'}">
+            </td>
+            <td th:id="${emp.employeeCode + '_departmentName'}" th:text="${emp.departmentName}">
+                <input type="hidden" value="${emp.departmentCode}"
+                       th:id="${emp.employeeCode + '_departmentCode'}">
+            </td>
+            <td class="td-checkbox"><label th:for="${emp.employeeCode + '_deleteFlag'}"></label><input
+                    th:id="${emp.employeeCode + '_deleteFlag'}" type="checkbox"
+                    disabled
+                    th:checked="${emp.deleteFlag == null or emp.deleteFlag == 0}"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-none" colspan="99">
+                <button id="btn-new" class="btn-submit" onclick="btnNewClick()">New</button>
+                <button id="btn-select" class="btn-submit">Select</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function btnNewClick() {
+        window.open(`/employee-form`)
+    }
+
+
+</script>
+</body>
+</html>
